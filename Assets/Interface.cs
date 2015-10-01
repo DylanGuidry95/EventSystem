@@ -1,11 +1,8 @@
 ﻿public interface ISub
 {
-    void Subcribe(string type, string msg); 
+    void Subcribe(string type, string msg, CallBacks func); 
     //function that creates a subcription that the object that inherits
     //froms this iterface is looking for 
-    void Recive(string msg);
-    //recives an event from the observer that the subcribers has subcribed to when
-    //the event has been published from some where elese in the program
 }
 
 public interface IPub
