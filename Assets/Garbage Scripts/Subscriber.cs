@@ -8,7 +8,7 @@ public class Subscriber : MonoBehaviour, ISub
     [SerializeField]
     GameObject prefab;
     GameObject box;
-    public void Subcribe(string type, string msg, CallBacks func)
+    public void Subscribe(string type, string msg, CallBacks func)
     {
         EventSystem.AddSub(type, msg, func, this);
     }
@@ -18,10 +18,10 @@ public class Subscriber : MonoBehaviour, ISub
     {
         box = Instantiate(prefab) as GameObject;
         //Subs to a event msg
-        Subcribe("publisher", "Up", Up);
-        Subcribe("publisher", "Down", Down);
-        Subcribe("publisher", "Left", Left);
-        Subcribe("publisher", "Right", Right);
+        Subscribe("publisher", "Up", Up);
+        Subscribe("publisher", "Down", Down);
+        Subscribe("publisher", "Left", Left);
+        Subscribe("publisher", "Right", Right);
     }
 
     // Update is called once per frame

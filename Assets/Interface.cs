@@ -1,6 +1,6 @@
 ﻿public interface ISub
 {
-    void Subcribe(string type, string msg, CallBacks func); 
+    void Subscribe(string type, string msg, CallBacks func); 
     //function that creates a subcription that the object that inherits
     //froms this iterface is looking for 
 }

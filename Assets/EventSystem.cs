@@ -37,6 +37,7 @@ public class EventSystem : Singleton<EventSystem>
 
     private void NotifySubs(string msg)
     {
+        //Debug.Log(m_Subscribers.Capacity);
         foreach (Listener l in m_Subscribers)
         {
             if (l.EventMsg == msg) //if the disctionary for subribers contains the msg

@@ -2,7 +2,7 @@
 using System.Collections;
 using System;
 
-public class Unit : MonoBehaviour, IPub
+public class Unit : MonoBehaviour
 {
     FSM<UnitStates> _fsm;
 
@@ -53,44 +53,8 @@ public class Unit : MonoBehaviour, IPub
         _fsm.AddTransition(UnitStates.e_Combat, UnitStates.e_Dead);
     }
 
-    string prevState;
-    void Update()
+    void IdleToCombat()
     {
-        CheckState();
-    }
-
-    delegate void Transition();
-    Transition _transition;
-
-    void CheckState()
-    {
-        switch(_fsm.state)
-        {
-            case UnitStates.e_Init:
-                new WaitForSeconds(2f);
-                _fsm.Transition(_fsm.state, UnitStates.e_Idle);
-                break;
-
-            case UnitStates.e_Idle:
-                Publish("Unit->" + UnitStates.e_Idle);
-                new WaitForSeconds(2f);
-                _fsm.Transition(_fsm.state, UnitStates.e_Combat);
-                break;
-
-            case UnitStates.e_Combat:
-                Publish("Unit->" + UnitStates.e_Combat);
-                break;
-
-            case UnitStates.e_Dead:
-                break;
-
-            default:
-                break;
-        }
-    }
-
-    public void Publish(string msg)
-    {
-        EventSystem.Notify(msg);
+        _fsm.Transition(_fsm.state, UnitStates.e_Combat);
     }
 }
