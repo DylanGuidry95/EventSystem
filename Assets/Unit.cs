@@ -15,6 +15,11 @@ public class Unit : MonoBehaviour
         }
     }
 
+    public string getState()
+    {
+        return _fsm.state.ToString();
+    }
+
     enum UnitStates
     {
         e_Init,
@@ -53,8 +58,14 @@ public class Unit : MonoBehaviour
         _fsm.AddTransition(UnitStates.e_Combat, UnitStates.e_Dead);
     }
 
-    void IdleToCombat()
+    public void IdleToCombat()
     {
+        _fsm.Transition(_fsm.state, UnitStates.e_Idle);
         _fsm.Transition(_fsm.state, UnitStates.e_Combat);
+    }
+
+    public void CombatToIdle()
+    {
+        _fsm.Transition(_fsm.state, UnitStates.e_Idle);
     }
 }

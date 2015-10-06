@@ -55,7 +55,7 @@ public class EventSystem : Singleton<EventSystem>
         //sets the case of all characters in the string to lower case for consitency when comparing the strings 
         string m = msg.ToString().ToLower();
         string subcription = t + "->" + m; //creates a new string by merging the the type and msg together
-        Debug.Log(subcription);
+        //Debug.Log(subcription);
         instance.AddListener(subcription, func, sub); //passes the new string and sub into the AddListener function
     }
 

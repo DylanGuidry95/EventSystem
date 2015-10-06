@@ -8,12 +8,13 @@ public class CombatSystem : MonoBehaviour , IPub, ISub
     FSM<CombatStates> _fsm;
 
     [SerializeField]
-    List<Unit> AllyTeam;
+    List<Players> AllyTeam;
     [SerializeField]
-    List<Unit> EnemyTeam;
+    List<Enemy> EnemyTeam;
 
     public bool test;
-
+    public int i = 0;
+    public int j = 0;
     static private CombatSystem Instance;
     static public CombatSystem _instance
     {
@@ -52,9 +53,13 @@ public class CombatSystem : MonoBehaviour , IPub, ISub
 
         test = true;
         StartCoroutine(transition());
-
+        Subscribe("GUI","Attacked", AttackOrder);
     }
 
+    void Start()
+    {
+        AttackOrder();
+    }
 
     IEnumerator transition()
     {
@@ -75,6 +80,7 @@ public class CombatSystem : MonoBehaviour , IPub, ISub
             case CombatStates.e_ActionChoice:
                 test = false;
                 SelectAction();
+                //AttackOrder();
                 break;
         }
     }
@@ -103,6 +109,33 @@ public class CombatSystem : MonoBehaviour , IPub, ISub
         Publish("Combat->" + _fsm.state.ToString());
     }
 
+    void AttackOrder()
+    {
+        if (i == AllyTeam.Count)
+        {
+            i = 0;
+        }
+        else if (i <= AllyTeam.Count)
+        {
+            Publish("Combat->" + AllyTeam[i].name);
+            i++;
+            if(i == AllyTeam.Count)
+                i = 0;
+        }
+
+        if (j == EnemyTeam.Count)
+        {
+            j = 0;
+        }
+        else if (j <= EnemyTeam.Count)
+        {
+            Publish("Combat->" + EnemyTeam[j].name);
+            j++;
+            if (j == EnemyTeam.Count)
+                j = 0;
+        }
+    }
+
     void InitToSelectAction()
     {
         _fsm.Transition(_fsm.state, CombatStates.e_ActionChoice);
@@ -111,10 +144,12 @@ public class CombatSystem : MonoBehaviour , IPub, ISub
     void ActionSelected()
     {
         _fsm.Transition(_fsm.state, CombatStates.e_PerformAction);
+        InitToSelectAction();
     }
 
     public void Publish(string msg)
     {
+        Debug.Log(msg);
         EventSystem.Notify(msg);
     }
 

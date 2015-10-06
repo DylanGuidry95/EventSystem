@@ -33,7 +33,7 @@ public class Enemy : Unit, ISub
 
     public void TakeDamage(int dmg)
     {
-        Debug.Log(dmg);
+        //Debug.Log(dmg);
         if (!blocking)
             CurrentHealth -= dmg;
         else

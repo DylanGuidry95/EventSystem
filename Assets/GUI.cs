@@ -15,6 +15,7 @@ public class GUI : MonoBehaviour ,IPub, ISub
     {
         DeactivateButtons();
         Subscribe("Combat", "e_ActionChoice", DisplayButton);
+        
     }
 
     void Start()
@@ -25,6 +26,7 @@ public class GUI : MonoBehaviour ,IPub, ISub
     public void ButtonMessage()
     {
         Publish("GUI->" + gameObject.name);
+        Publish("GUI->Attacked");
     }
 
     void DisplayButton()
