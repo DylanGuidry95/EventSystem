@@ -15,12 +15,12 @@ public class GUI : MonoBehaviour ,IPub, ISub
     {
         DeactivateButtons();
         Subscribe("Combat", "e_ActionChoice", DisplayButton);
-        
+        Subscribe("Combat", "e_ExitCombat", TurnOffButton);
     }
 
     void Start()
     {
-
+        gameObject.GetComponent<Button>().interactable = false;
     }
 
     public void ButtonMessage()
@@ -32,6 +32,11 @@ public class GUI : MonoBehaviour ,IPub, ISub
     void DisplayButton()
     {
             gameObject.GetComponent<Button>().interactable = true;
+    }
+
+    void TurnOffButton()
+    {
+        gameObject.GetComponent<Button>().interactable = false;
     }
 
     public void DeactivateButtons()

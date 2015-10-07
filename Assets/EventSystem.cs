@@ -21,7 +21,7 @@ public class EventSystem : Singleton<EventSystem>
         }
     }
 
-    
+
     private List<Listener> m_Subscribers = new List<Listener>();
 
     protected override void Awake()
@@ -64,18 +64,27 @@ public class EventSystem : Singleton<EventSystem>
     */
     private void AddListener(string msg, CallBacks func, ISub sub)
     {
-        Listener l = new Listener(msg, func, sub); //resets the list of Listeners by newing it
+        Listener l = new Listener(msg, func, sub); //creates a new object of type Listener
         m_Subscribers.Add(l); //add the Listener to the list
     }
 
-    private void RemoveSub(string msg, ISub sub)
+    private void RemoveListener(string msg, CallBacks func, ISub sub)
     {
-        foreach(Listener l in m_Subscribers)
+        Listener search = new Listener(msg, func, sub);
+
+        foreach(Listener s in m_Subscribers)
         {
-            if (l.sub == sub && l.EventMsg == msg)
+            if(s.sub == sub)
             {
-                m_Subscribers.Remove(l);
+                Debug.Log("Removing" + s.sub);
+                m_Subscribers.Remove(s);
             }
         }
+    }
+
+    static public void RemoveSub(string type, string msg, CallBacks func, ISub sub)
+    {
+        string subsc = type.ToLower() + msg.ToLower();
+        instance.RemoveListener(subsc, func, sub);
     }
 }

@@ -16,7 +16,6 @@ public class FSM<T>
     public FSM() //Contructor for the FSM
     {
         States = new List<T>(); //creates a new list of states for each instance of the FSM
-        Debug.Log("State at creation  " + cState);
     }
 
     public void AddState(T state)
@@ -59,7 +58,6 @@ public class FSM<T>
         {
             //Debug.Log("valid transition from " + from.ToString() + " to " + to.ToString());
             cState = to;
-            Debug.Log("New State " + cState.ToString());
             return true;
         }
         else

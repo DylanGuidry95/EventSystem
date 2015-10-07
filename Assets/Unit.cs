@@ -24,7 +24,8 @@ public class Unit : MonoBehaviour
     {
         e_Init,
         e_Idle,
-        e_Combat, 
+        e_Combat,
+        e_Victor, 
         e_Dead
     }
 
@@ -47,6 +48,7 @@ public class Unit : MonoBehaviour
         _fsm.AddState(UnitStates.e_Idle);
         _fsm.AddState(UnitStates.e_Combat);
         _fsm.AddState(UnitStates.e_Dead);
+        _fsm.AddState(UnitStates.e_Victor);
     }
 
     void AddTransitions()
@@ -56,16 +58,29 @@ public class Unit : MonoBehaviour
         _fsm.AddTransition(UnitStates.e_Idle, UnitStates.e_Dead);
         _fsm.AddTransition(UnitStates.e_Combat, UnitStates.e_Idle);
         _fsm.AddTransition(UnitStates.e_Combat, UnitStates.e_Dead);
+        _fsm.AddTransition(UnitStates.e_Combat, UnitStates.e_Victor);
+        _fsm.AddTransition(UnitStates.e_Idle, UnitStates.e_Victor);
     }
 
-    public void IdleToCombat()
+    public void ToCombat()
     {
-        _fsm.Transition(_fsm.state, UnitStates.e_Idle);
         _fsm.Transition(_fsm.state, UnitStates.e_Combat);
     }
 
-    public void CombatToIdle()
+    public void toIdle()
+
     {
         _fsm.Transition(_fsm.state, UnitStates.e_Idle);
+    }
+
+    public void ToVictory()
+    {
+        _fsm.Transition(_fsm.state, UnitStates.e_Victor);
+    }
+
+    public void ToDead()
+    {
+        _fsm.Transition(_fsm.state, UnitStates.e_Dead);
+        Destroy(this.gameObject);
     }
 }

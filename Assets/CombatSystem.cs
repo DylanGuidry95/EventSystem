@@ -13,8 +13,8 @@ public class CombatSystem : MonoBehaviour , IPub, ISub
     List<Enemy> EnemyTeam;
 
     public bool test;
-    public int i = 0;
-    public int j = 0;
+    public int i;
+    public int j;
     static private CombatSystem Instance;
     static public CombatSystem _instance
     {
@@ -23,6 +23,9 @@ public class CombatSystem : MonoBehaviour , IPub, ISub
             return Instance;
         }
     }
+
+    [SerializeField]
+    string state;
 
     enum CombatStates
     {
@@ -63,11 +66,64 @@ public class CombatSystem : MonoBehaviour , IPub, ISub
 
     IEnumerator transition()
     {
-        while(test == true)
+        while(WinCondition() == false)
         {
+            if (WinCondition() == true)
+            {
+                _fsm.Transition(_fsm.state, CombatStates.e_ExitCombat);
+                StopCoroutine(transition());
+            }
             CheckState();
+
             yield return null;
         }
+        Publish("Combat->" + "e_ExitCombat");
+    }
+
+    void Update()
+    {
+        if(Input.GetKeyDown(KeyCode.P))
+        {
+            InitToSelectAction();
+        }
+
+        if (AllyTeam[i] == null)
+        {
+            AllyTeam.Remove(AllyTeam[i]);
+        }
+        if (EnemyTeam[j] == null)
+        {
+            EnemyTeam.Remove(EnemyTeam[j]);
+        }
+
+        state = _fsm.state.ToString();
+    }
+
+    bool WinCondition()
+    {
+        if(AllyTeam.Count != 0 && EnemyTeam.Count == 0)
+        {
+            Debug.Log("winner: ally");
+            foreach (Players p in AllyTeam)
+            {
+                Publish("CombatWin->" + p.name);
+            }
+            _fsm.Transition(_fsm.state, CombatStates.e_ExitCombat);
+            StopCoroutine(transition());
+            return true;
+        }
+        else if (EnemyTeam.Count != 0 && AllyTeam.Count == 0)
+        {
+            Debug.Log("winner: enemy");
+            foreach (Enemy e in EnemyTeam)
+            {
+                Publish("CombatWin->" + e.name);
+            }
+            _fsm.Transition(_fsm.state, CombatStates.e_ExitCombat);
+            StopCoroutine(transition());
+            return true;
+        }
+        return false;
     }
 
     void CheckState()
@@ -75,7 +131,7 @@ public class CombatSystem : MonoBehaviour , IPub, ISub
         switch (_fsm.state)
         {
             case CombatStates.e_Init:
-                _fsm.Transition(_fsm.state, CombatStates.e_ActionChoice);
+                //_fsm.Transition(_fsm.state, CombatStates.e_ActionChoice);
                 break;
             case CombatStates.e_ActionChoice:
                 test = false;
@@ -101,7 +157,7 @@ public class CombatSystem : MonoBehaviour , IPub, ISub
         _fsm.AddTransition(CombatStates.e_PerformAction, CombatStates.e_ActionChoice);
         _fsm.AddTransition(CombatStates.e_PerformAction,CombatStates.e_CheckForResolution);
         //This transition is to transition between each player choosing and performing there actions
-        _fsm.AddTransition(CombatStates.e_CheckForResolution,CombatStates.e_ExitCombat);
+        _fsm.AddTransition(CombatStates.e_ActionChoice,CombatStates.e_ExitCombat);
     }
 
     void SelectAction()
@@ -111,34 +167,39 @@ public class CombatSystem : MonoBehaviour , IPub, ISub
 
     void AttackOrder()
     {
-        if (i == AllyTeam.Count)
+        if (_fsm.state == CombatStates.e_ActionChoice)
         {
-            i = 0;
-        }
-        else if (i <= AllyTeam.Count)
-        {
-            Publish("Combat->" + AllyTeam[i].name);
-            i++;
-            if(i == AllyTeam.Count)
+            if (i == AllyTeam.Count)
+            {
                 i = 0;
+            }
+            else if (i <= AllyTeam.Count)
+            {
+                Publish("Combat->" + AllyTeam[i].name);
+                i++;
+                if (i == AllyTeam.Count)
+                    i = 0;
+            }
+
+            if (j == EnemyTeam.Count)
+            {
+                j = 0;
+            }
+            else if (j <= EnemyTeam.Count)
+            {
+                Publish("Combat->" + EnemyTeam[j].name);
+                j++;
+                if (j == EnemyTeam.Count)
+                    j = 0;
+            }
         }
 
-        if (j == EnemyTeam.Count)
-        {
-            j = 0;
-        }
-        else if (j <= EnemyTeam.Count)
-        {
-            Publish("Combat->" + EnemyTeam[j].name);
-            j++;
-            if (j == EnemyTeam.Count)
-                j = 0;
-        }
     }
 
     void InitToSelectAction()
     {
         _fsm.Transition(_fsm.state, CombatStates.e_ActionChoice);
+        Publish("Combat->" + "e_ActionSelect");
     }
 
     void ActionSelected()
@@ -149,7 +210,6 @@ public class CombatSystem : MonoBehaviour , IPub, ISub
 
     public void Publish(string msg)
     {
-        Debug.Log(msg);
         EventSystem.Notify(msg);
     }
 

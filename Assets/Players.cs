@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 public class Players : MonoBehaviour, ISub
 {
@@ -15,6 +16,9 @@ public class Players : MonoBehaviour, ISub
 
     bool blocking;
 
+    public Slider hp;
+
+
     [SerializeField]
     string state;
 
@@ -28,6 +32,7 @@ public class Players : MonoBehaviour, ISub
         Subscribe("GUI", "Heal", Heal);
         Subscribe("GUI", "Wait", Wait);
         Subscribe("Combat", gameObject.name, InCombat);
+        Subscribe("CombatWin", gameObject.name, Winner);
     }
     void Start()
     {
@@ -37,7 +42,36 @@ public class Players : MonoBehaviour, ISub
         Potions = Random.Range(1, 5); //generate random number between 1 adn 5 to see how many potions the player has a start
         Arrmor = Random.Range(1, 10); //generate random number between 1,10 for how much dmg the player can block
         Target = FindObjectOfType<Enemy>();
+        hp.maxValue = MaxHealth;
+        hp.value = CurrentHealth;
+        gameObject.GetComponent<Unit>().toIdle();
+    }
 
+    void Update()
+    {
+        if (CurrentHealth <= 0)
+        {
+            UnSub("CombatWin", gameObject.name, Winner);
+            UnSub("GUI", "Attack", Attack);
+            UnSub("GUI", "Defend", Defend);
+            UnSub("GUI", "Heal", Heal);
+            UnSub("GUI", "Wait", Wait);
+            UnSub("Combat", gameObject.name, InCombat);
+            gameObject.GetComponent<Unit>().ToDead();
+
+        }
+        state = gameObject.GetComponent<Unit>().getState().ToString();
+    }
+
+    void Winner()
+    {
+        gameObject.GetComponent<Unit>().ToVictory();
+        gameObject.GetComponent<Renderer>().material.color = Color.blue;
+    }
+
+    void UnSub(string type, string msg, CallBacks func)
+    {
+        EventSystem.RemoveSub(type, msg, func, this);
     }
 
     public void Subscribe(string type, string msg, CallBacks func)
@@ -47,12 +81,12 @@ public class Players : MonoBehaviour, ISub
 
     void InCombat()
     {
-        Debug.Log("fight" + gameObject.name);
+        Debug.Log("Fighting: " + gameObject.name);
         gameObject.GetComponent<Renderer>().material.color = Color.red;
-        gameObject.GetComponent<Unit>().IdleToCombat();
+        gameObject.GetComponent<Unit>().ToCombat();
     }
 
-    void TakeDamage(int dmg)
+    public void TakeDamage(int dmg)
     {
         CurrentHealth -= dmg;
         if(blocking)
@@ -60,17 +94,16 @@ public class Players : MonoBehaviour, ISub
             CurrentHealth -= (dmg - Arrmor);
             blocking = false;
         }
+        hp.value = CurrentHealth;
     }
 
     void Attack()
     {
         if (gameObject.GetComponent<Unit>().getState().ToString() == "e_Combat")
         {
-            Debug.Log(gameObject.name + " Attacked");
             Target.TakeDamage(AttackPower);
             gameObject.GetComponent<Renderer>().material.color = Color.white;
-            gameObject.GetComponent<Unit>().CombatToIdle();
-            Debug.Log(gameObject.name + " : " + gameObject.GetComponent<Unit>().getState().ToString());
+            gameObject.GetComponent<Unit>().toIdle();
         }
 
     }
@@ -81,7 +114,7 @@ public class Players : MonoBehaviour, ISub
         {
             blocking = true;
             gameObject.GetComponent<Renderer>().material.color = Color.white;
-            gameObject.GetComponent<Unit>().CombatToIdle();
+            gameObject.GetComponent<Unit>().toIdle();
         }
 
     }
@@ -90,9 +123,8 @@ public class Players : MonoBehaviour, ISub
     {
         if (gameObject.GetComponent<Unit>().getState() == "e_Combat")
         {
-            gameObject.GetComponent<Unit>().CombatToIdle();
+            gameObject.GetComponent<Unit>().toIdle();
             gameObject.GetComponent<Renderer>().material.color = Color.white;
-            Debug.Log("Heal");
         }
 
     }
@@ -101,9 +133,8 @@ public class Players : MonoBehaviour, ISub
     {
         if (gameObject.GetComponent<Unit>().getState() == "e_Combat")
         {
-            gameObject.GetComponent<Unit>().CombatToIdle();
+            gameObject.GetComponent<Unit>().toIdle();
             gameObject.GetComponent<Renderer>().material.color = Color.white;
-            Debug.Log("Wait");
         }
 
     }
