@@ -9,9 +9,9 @@ public class EventSystem : Singleton<EventSystem>
     */
     class Listener
     {
-        public CallBacks m_function;
-        public string EventMsg;
-        public ISub sub;
+        public CallBacks m_function; //creates and instance ofthe callbacks function in the Event Sytem
+        public string EventMsg; //Msg that we subscribe to
+        public ISub sub; //Object that is using the Sub interface
         public Listener() { } //default constructor
         public Listener(string eMsg, CallBacks func, ISub subscriber) //constructor with arguments
         {
