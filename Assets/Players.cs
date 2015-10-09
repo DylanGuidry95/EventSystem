@@ -123,6 +123,11 @@ public class Players : MonoBehaviour, ISub
     {
         if (gameObject.GetComponent<Unit>().getState() == "e_Combat")
         {
+            if(Potions > 0)
+            {
+                CurrentHealth += 10;
+                Potions -= 1;
+            }
             gameObject.GetComponent<Unit>().toIdle();
             gameObject.GetComponent<Renderer>().material.color = Color.white;
         }

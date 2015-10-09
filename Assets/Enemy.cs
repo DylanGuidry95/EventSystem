@@ -99,19 +99,4 @@ public class Enemy : MonoBehaviour, ISub
             gameObject.GetComponent<Unit>().toIdle();
         }
     }
-
-    void Defend()
-    {
-        blocking = true;
-    }
-
-    void Heal()
-    {
-        Debug.Log("Heal");
-    }
-
-    void Wait()
-    {
-        Debug.Log("Wait");
-    }
 }

@@ -57,6 +57,7 @@ public class CombatSystem : MonoBehaviour , IPub, ISub
         test = true;
         StartCoroutine(transition());
         Subscribe("GUI","Attacked", AttackOrder);
+        Subscribe("GUI", "Quit", CloseApp);
     }
 
     void Start()
@@ -206,6 +207,12 @@ public class CombatSystem : MonoBehaviour , IPub, ISub
     {
         _fsm.Transition(_fsm.state, CombatStates.e_PerformAction);
         InitToSelectAction();
+    }
+
+    void CloseApp()
+    {
+        Publish("Combat->" + "e_ExitCombat");
+        Application.Quit();
     }
 
     public void Publish(string msg)

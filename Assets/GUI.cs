@@ -26,7 +26,10 @@ public class GUI : MonoBehaviour ,IPub, ISub
     public void ButtonMessage()
     {
         Publish("GUI->" + gameObject.name);
+        if (gameObject.name != "Quit")
+        {
         Publish("GUI->Attacked");
+        }
     }
 
     void DisplayButton()
@@ -36,7 +39,8 @@ public class GUI : MonoBehaviour ,IPub, ISub
 
     void TurnOffButton()
     {
-        gameObject.GetComponent<Button>().interactable = false;
+        if (gameObject.name != "Quit")
+            gameObject.GetComponent<Button>().interactable = false;
     }
 
     public void DeactivateButtons()
